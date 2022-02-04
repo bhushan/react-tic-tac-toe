@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import party from 'party-js';
+
 import Board from 'components/Board';
 
 import 'App.css'
@@ -14,21 +16,24 @@ const winingCombinations = [
   [ 2, 4, 6 ]
 ];
 
-const calculateWinner = (squares: Array<null | string>): null | string => {
-  for (let i = 0; i < winingCombinations.length; i++) {
-    const [ a, b, c ] = winingCombinations[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-
-  return null;
-}
-
 const App = () => {
   const [ history, setHistory ] = useState([ { squares: Array(9).fill(null) } ]);
   const [ stepNumber, setStepNumber ] = useState(0);
   const [ xIsNext, setXIsNext ] = useState(true);
+
+  const calculateWinner = (squares: Array<null | string>): null | string => {
+    for (let i = 0; i < winingCombinations.length; i++) {
+      const [ a, b, c ] = winingCombinations[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        party.confetti(party.Rect.fromScreen(), {
+          count: party.variation.range(100, 200),
+        })
+        return squares[a];
+      }
+    }
+
+    return null;
+  }
 
   const handleClick = (i: number) => {
     const historySlice = history.slice(0, stepNumber + 1);
@@ -36,6 +41,10 @@ const App = () => {
     const squares = current.squares.slice();
 
     if (calculateWinner(squares) || squares[i]) {
+      if (window.confirm('reset')) {
+        reset();
+      }
+
       return;
     }
 
@@ -82,7 +91,7 @@ const App = () => {
           />
         </div>
         <div className="game-info">
-          <div>{status}</div>
+          <h3>{status}</h3>
           <ol>
             <li>
               <button onClick={reset}>Reset Game</button>
