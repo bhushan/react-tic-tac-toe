@@ -41,7 +41,7 @@ const App = () => {
     const squares = current.squares.slice();
 
     if (calculateWinner(squares) || squares[i]) {
-      if (window.confirm('reset')) {
+      if (calculateWinner(squares) && window.confirm('reset')) {
         reset();
       }
 
